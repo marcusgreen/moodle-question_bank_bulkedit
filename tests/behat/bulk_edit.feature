@@ -33,8 +33,7 @@ Feature: Bulk edit selected questions with a find and replace rule
     And I click on "First" "checkbox"
     And I click on "Second" "checkbox"
     And I click on "Third" "checkbox"
-    And I click on "With selected" "button"
-    And I click on question bulk action "bulkedit"
+    And I bulk edit the selected questions
     And I should see "Bulk edit 3 selected question(s)"
     And I set the following fields to these values:
       | Field          | Question text    |
@@ -47,10 +46,12 @@ Feature: Bulk edit selected questions with a find and replace rule
     And I click on "Second" "checkbox"
     And I press "Apply changes"
     And I should see "1 updated, 2 skipped, 0 failed."
-    And I click on "Return to the question bank" "link"
+    And I should see "Updated" in the "First" "table_row"
+    And I should see "Unticked" in the "Second" "table_row"
+    And I should see "No change" in the "Third" "table_row"
+    And I click on "View history" "link" in the "First" "table_row"
+    And I should see "Question history"
     And I should see "First"
-    And I choose "History" action for "First" in the question bank
-    And I should see "Version 2"
 
   @javascript
   Scenario: Build a rule with the AI rule builder
@@ -60,8 +61,7 @@ Feature: Bulk edit selected questions with a find and replace rule
     And I am on the "Question bank 1" "core_question > question bank" page logged in as "teacher1"
     And I apply question bank filter "Category" with value "Test questions"
     And I click on "First" "checkbox"
-    And I click on "With selected" "button"
-    And I click on question bulk action "bulkedit"
+    And I bulk edit the selected questions
     And I set the following fields to these values:
       | Field       | Question text        |
       | Instruction | Change frog to toad  |
@@ -80,7 +80,6 @@ Feature: Bulk edit selected questions with a find and replace rule
     And I am on the "Question bank 1" "core_question > question bank" page logged in as "teacher1"
     And I apply question bank filter "Category" with value "Test questions"
     And I click on "First" "checkbox"
-    And I click on "With selected" "button"
-    When I click on question bulk action "bulkedit"
+    When I bulk edit the selected questions
     Then I should see "The AI rule builder cannot be used: Quota reached"
     And "Build rule with AI" "button" should not exist
