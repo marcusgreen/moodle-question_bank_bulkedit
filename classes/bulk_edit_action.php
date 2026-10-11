@@ -17,30 +17,30 @@
 namespace qbank_bulkedit;
 
 /**
- * Class bulk_move_action is the base class for moving questions.
+ * The "Bulk edit" action in the question bank bulk actions menu.
  *
  * @package    qbank_bulkedit
- * @author     Marcus Green
+ * @copyright  2026 Marcus Green
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class bulk_edit_action extends \core_question\local\bank\bulk_action_base {
-
+    #[\Override]
     public function get_bulk_action_title(): string {
-        return get_string('editbulkaction', 'qbank_bulkedit');
+        return get_string('bulkaction', 'qbank_bulkedit');
     }
 
+    #[\Override]
     public function get_key(): string {
-        return 'edit';
+        return 'bulkedit';
     }
 
+    #[\Override]
     public function get_bulk_action_url(): \moodle_url {
-        return new \moodle_url('/question/bank/bulkedit/edit.php');
+        return new \moodle_url('/question/bank/bulkedit/setup.php');
     }
 
+    #[\Override]
     public function get_bulk_action_capabilities(): ?array {
-        return [
-            'moodle/question:editall',
-            'moodle/question:add',
-        ];
+        return ['qbank/bulkedit:use'];
     }
 }

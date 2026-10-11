@@ -14,23 +14,29 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace qbank_bulkedit;
-
-use core_question\local\bank\bulk_action_base;
-use core_question\local\bank\plugin_features_base;
-
 /**
- * Class plugin_feature is the entrypoint for the features.
+ * Hook callbacks for qbank_bulkedit.
  *
  * @package    qbank_bulkedit
- * @author     Marcus Green
+ * @copyright  2026 Marcus Green
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class plugin_feature extends plugin_features_base {
 
-    public function get_bulk_actions(): array {
-        return [
-            new bulk_edit_action(),
-        ];
-    }
-}
+defined('MOODLE_INTERNAL') || die();
+
+$callbacks = [
+    [
+        'hook' => \qbank_bulkedit\hook\collect_fields::class,
+        'callback' => \qbank_bulkedit\local\hook_callbacks::class . '::collect_fields',
+        'priority' => 1000,
+    ],
+    [
+        // String literal because local_ai_manager is an optional dependency.
+        'hook' => 'local_ai_manager\hook\purpose_usage',
+        'callback' => \qbank_bulkedit\local\hook_callbacks::class . '::handle_purpose_usage',
+    ],
+    [
+        'hook' => \core\hook\di_configuration::class,
+        'callback' => \qbank_bulkedit\local\hook_callbacks::class . '::configure_di',
+    ],
+];

@@ -1,0 +1,155 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template qbank_bulkedit/preview
+
+    Dry run of a bulk edit: the changes the rule would make, each with a tick box.
+
+    Example context (json):
+    {
+        "jobid": 3,
+        "sesskey": "abc123",
+        "applyurl": "https://example.com/question/bank/bulkedit/apply.php",
+        "backurl": "https://example.com/question/bank/bulkedit/setup.php?jobid=3",
+        "field": "Mark scheme",
+        "rule": {"mode": "Find and replace", "find": "Marks: {n}", "hasfind": true, "replace": "Marks: 10",
+                 "caseinsensitive": false, "firstonly": false, "guard": "", "explanation": ""},
+        "changes": [
+            {"itemid": 7, "name": "Essay on rivers", "qtype": "AI Text", "before": "Use British spelling. ",
+             "removed": "Marks: 5", "added": "Marks: 10", "after": ""}
+        ],
+        "haschanges": true,
+        "changecount": 1,
+        "skipped": [{"name": "Short answer 1", "qtype": "Short answer", "status": "No match", "statuskey": "nomatch", "error": ""}],
+        "hasskipped": true,
+        "skippedcount": 1,
+        "willqueue": false,
+        "synclimit": 50
+    }
+}}
+<div class="qbank-bulkedit-preview">
+    <h2>{{#str}}previewheading, qbank_bulkedit{{/str}}</h2>
+    <p>{{#str}}previewintro, qbank_bulkedit{{/str}}</p>
+
+    <dl class="row qbank-bulkedit-rule">
+        <dt class="col-sm-3">{{#str}}field, qbank_bulkedit{{/str}}</dt>
+        <dd class="col-sm-9">{{field}}</dd>
+        {{#rule}}
+            <dt class="col-sm-3">{{#str}}mode, qbank_bulkedit{{/str}}</dt>
+            <dd class="col-sm-9">{{mode}}
+                {{#caseinsensitive}}<span class="badge bg-secondary">{{#str}}caseinsensitive, qbank_bulkedit{{/str}}</span>{{/caseinsensitive}}
+                {{#firstonly}}<span class="badge bg-secondary">{{#str}}firstonly, qbank_bulkedit{{/str}}</span>{{/firstonly}}
+            </dd>
+            {{#hasfind}}
+                <dt class="col-sm-3">{{#str}}find, qbank_bulkedit{{/str}}</dt>
+                <dd class="col-sm-9"><code>{{find}}</code></dd>
+            {{/hasfind}}
+            <dt class="col-sm-3">{{#str}}replace, qbank_bulkedit{{/str}}</dt>
+            <dd class="col-sm-9"><code>{{replace}}</code></dd>
+            {{#guard}}
+                <dt class="col-sm-3">{{#str}}guard, qbank_bulkedit{{/str}}</dt>
+                <dd class="col-sm-9"><code>{{guard}}</code></dd>
+            {{/guard}}
+            {{#explanation}}
+                <dt class="col-sm-3">{{#str}}aiexplanation, qbank_bulkedit{{/str}}</dt>
+                <dd class="col-sm-9">{{explanation}}</dd>
+            {{/explanation}}
+        {{/rule}}
+    </dl>
+
+    <form method="post" action="{{applyurl}}" id="qbank-bulkedit-apply-{{uniqid}}">
+        <input type="hidden" name="jobid" value="{{jobid}}">
+        <input type="hidden" name="sesskey" value="{{sesskey}}">
+
+        <h3>{{#str}}changes, qbank_bulkedit, {{changecount}}{{/str}}</h3>
+        {{#haschanges}}
+            {{#willqueue}}
+                <div class="alert alert-info">{{#str}}willqueue, qbank_bulkedit, {{synclimit}}{{/str}}</div>
+            {{/willqueue}}
+            <table class="table table-sm generaltable qbank-bulkedit-changes">
+                <thead>
+                    <tr>
+                        <th scope="col">
+                            <input type="checkbox" checked id="qbank-bulkedit-all-{{uniqid}}"
+                                   aria-label="{{#str}}selectall{{/str}}">
+                        </th>
+                        <th scope="col">{{#str}}question{{/str}}</th>
+                        <th scope="col">{{#str}}change, qbank_bulkedit{{/str}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#changes}}
+                        <tr>
+                            <td>
+                                <input type="checkbox" name="apply[]" value="{{itemid}}" checked
+                                       id="qbank-bulkedit-item-{{itemid}}" data-qbank-bulkedit-item="1">
+                            </td>
+                            <td>
+                                <label for="qbank-bulkedit-item-{{itemid}}">{{{name}}}</label>
+                                <div class="small text-muted">{{qtype}}</div>
+                            </td>
+                            <td class="qbank-bulkedit-diff"><span class="qbank-bulkedit-context">{{before}}</span><del>{{removed}}</del><ins>{{added}}</ins><span class="qbank-bulkedit-context">{{after}}</span></td>
+                        </tr>
+                    {{/changes}}
+                </tbody>
+            </table>
+        {{/haschanges}}
+        {{^haschanges}}
+            <div class="alert alert-warning">{{#str}}nochanges, qbank_bulkedit{{/str}}</div>
+        {{/haschanges}}
+
+        {{#hasskipped}}
+            <details class="mb-3">
+                <summary>{{#str}}unchanged, qbank_bulkedit, {{skippedcount}}{{/str}}</summary>
+                <table class="table table-sm generaltable">
+                    <thead>
+                        <tr>
+                            <th scope="col">{{#str}}question{{/str}}</th>
+                            <th scope="col">{{#str}}status{{/str}}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#skipped}}
+                            <tr>
+                                <td>{{{name}}} <span class="small text-muted">{{qtype}}</span></td>
+                                <td>{{status}}{{#error}} <span class="text-danger">{{error}}</span>{{/error}}</td>
+                            </tr>
+                        {{/skipped}}
+                    </tbody>
+                </table>
+            </details>
+        {{/hasskipped}}
+
+        <div class="d-flex gap-2">
+            {{#haschanges}}
+                <button type="submit" class="btn btn-primary">{{#str}}applychanges, qbank_bulkedit{{/str}}</button>
+            {{/haschanges}}
+            <a href="{{backurl}}" class="btn btn-secondary">{{#str}}backtorule, qbank_bulkedit{{/str}}</a>
+        </div>
+    </form>
+</div>
+{{#js}}
+    const all = document.getElementById('qbank-bulkedit-all-{{uniqid}}');
+    if (all) {
+        const form = document.getElementById('qbank-bulkedit-apply-{{uniqid}}');
+        all.addEventListener('change', () => {
+            form.querySelectorAll('[data-qbank-bulkedit-item]').forEach((box) => {
+                box.checked = all.checked;
+            });
+        });
+    }
+{{/js}}

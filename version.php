@@ -15,17 +15,17 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information for qbank_bulkeditquestions.
+ * Version information for qbank_bulkedit.
  *
- * @package    qbank_bulkeditquestions
- * @copyright  2021 Catalyst IT Australia Pty Ltd
- * @author     Safat Shahin <safatshahin@catalyst-au.net>
+ * @package    qbank_bulkedit
+ * @copyright  2026 Marcus Green
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'qbank_bulkedit';
-$plugin->version   = 2021070707;
-$plugin->requires  = 2021052500;
-$plugin->maturity  = MATURITY_STABLE;
+$plugin->version   = 2026101100;
+$plugin->requires  = 2025041400; // Moodle 5.0.
+$plugin->release   = '2.0.0';
+$plugin->maturity  = MATURITY_ALPHA;

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="question/bank/bulkedit/db" VERSION="20261011" COMMENT="XMLDB file for Moodle question/bank/bulkedit"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="qbank_bulkedit_job" COMMENT="A bulk edit job: the selected questions, the field and the rule to apply">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="contextid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Context of the question bank the job runs in"/>
+        <FIELD NAME="cmid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Course module of the question bank"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="User who created the job"/>
+        <FIELD NAME="returnurl" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Local URL of the question bank page to return to"/>
+        <FIELD NAME="qtypes" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Comma separated list of question types to include"/>
+        <FIELD NAME="field" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false" COMMENT="Name of the field to edit"/>
+        <FIELD NAME="rule" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="JSON encoded rule"/>
+        <FIELD NAME="aiinstruction" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Plain language instruction given to the AI rule builder"/>
+        <FIELD NAME="airule" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="JSON encoded rule as last returned by the AI"/>
+        <FIELD NAME="aibackend" TYPE="char" LENGTH="32" NOTNULL="false" SEQUENCE="false" COMMENT="AI backend used to build the rule"/>
+        <FIELD NAME="aimodel" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false" COMMENT="AI model used to build the rule"/>
+        <FIELD NAME="status" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="draft" SEQUENCE="false" COMMENT="draft, previewed, applying, done or failed"/>
+        <FIELD NAME="countupdated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="countskipped" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="countfailed" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="contextid" TYPE="foreign" FIELDS="contextid" REFTABLE="context" REFFIELDS="id"/>
+        <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="timemodified" UNIQUE="false" FIELDS="timemodified"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="qbank_bulkedit_item" COMMENT="One selected question within a bulk edit job">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="jobid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The question version that was selected and previewed"/>
+        <FIELD NAME="newquestionid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The question version created when the rule was applied"/>
+        <FIELD NAME="included" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="Whether the user wants the change applied"/>
+        <FIELD NAME="oldhash" TYPE="char" LENGTH="40" NOTNULL="false" SEQUENCE="false" COMMENT="sha1 of the field value when previewed"/>
+        <FIELD NAME="status" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="pending" SEQUENCE="false"/>
+        <FIELD NAME="error" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="jobid" TYPE="foreign" FIELDS="jobid" REFTABLE="qbank_bulkedit_job" REFFIELDS="id"/>
+        <KEY NAME="questionid" TYPE="foreign" FIELDS="questionid" REFTABLE="question" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>

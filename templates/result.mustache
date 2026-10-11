@@ -1,0 +1,70 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template qbank_bulkedit/result
+
+    Result of applying a bulk edit.
+
+    Example context (json):
+    {
+        "applying": false,
+        "failed": false,
+        "done": true,
+        "updated": 1,
+        "skipped": 1,
+        "errors": 0,
+        "rows": [
+            {"name": "Essay on rivers", "qtype": "AI Text", "status": "Updated", "statuskey": "updated", "error": "",
+             "historyurl": "https://example.com/question/bank/history/history.php?entryid=4"},
+            {"name": "Short answer 1", "qtype": "Short answer", "status": "No match", "statuskey": "nomatch", "error": ""}
+        ],
+        "returnurl": "https://example.com/question/edit.php?cmid=2"
+    }
+}}
+<div class="qbank-bulkedit-result">
+    <h2>{{#str}}resultheading, qbank_bulkedit{{/str}}</h2>
+    {{#applying}}
+        <div class="alert alert-info">{{#str}}applying, qbank_bulkedit{{/str}}</div>
+    {{/applying}}
+    {{#failed}}
+        <div class="alert alert-danger">{{#str}}jobfailed, qbank_bulkedit{{/str}}</div>
+    {{/failed}}
+    {{#done}}
+        <div class="alert alert-success">{{#str}}resultsummary, qbank_bulkedit, { "updated": {{updated}}, "skipped": {{skipped}}, "errors": {{errors}} }{{/str}}</div>
+    {{/done}}
+    <table class="table table-sm generaltable">
+        <thead>
+            <tr>
+                <th scope="col">{{#str}}question{{/str}}</th>
+                <th scope="col">{{#str}}status{{/str}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#rows}}
+                <tr class="qbank-bulkedit-status-{{statuskey}}">
+                    <td>{{{name}}} <span class="small text-muted">{{qtype}}</span></td>
+                    <td>
+                        {{status}}
+                        {{#historyurl}} <a href="{{historyurl}}">{{#str}}viewhistory, qbank_bulkedit{{/str}}</a>{{/historyurl}}
+                        {{#error}} <span class="text-danger">{{error}}</span>{{/error}}
+                    </td>
+                </tr>
+            {{/rows}}
+        </tbody>
+    </table>
+    <a href="{{returnurl}}" class="btn btn-primary">{{#str}}returntobank, qbank_bulkedit{{/str}}</a>
+</div>
